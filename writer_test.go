@@ -897,6 +897,24 @@ func ExampleMediaPlaylist_Segments_scte35_67_2014() {
 	// media2.ts
 }
 
+func ExampleMediaPlaylist_SessionKey() {
+	p, _ := NewMediaPlaylist(0, 2)
+	p.SessionKey = &Key{
+		Method:            "SAMPLE-AES",
+		URI:               "sku://test",
+		Keyformat:         "com.apple.streamingkeydelivery",
+		Keyformatversions: "1"}
+	p.Close()
+	fmt.Printf("%s\n", p)
+	// Output:
+	// #EXTM3U
+	// #EXT-X-VERSION:3
+	// #EXT-X-SESSION-KEY:METHOD=SAMPLE-AES,URI="sku://test",KEYFORMAT="com.apple.streamingkeydelivery",KEYFORMATVERSIONS="1"
+	// #EXT-X-MEDIA-SEQUENCE:0
+	// #EXT-X-TARGETDURATION:0
+	// #EXT-X-ENDLIST
+}
+
 /****************
  *  Benchmarks  *
  ****************/

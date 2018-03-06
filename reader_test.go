@@ -522,6 +522,28 @@ func TestMediaPlaylistWithSCTE35Tag(t *testing.T) {
 	}
 }
 
+func TestDecodeMediaPlaylistWithFairplayOffline(t *testing.T) {
+	f, err := os.Open("sample-playlists/fairplay-offline.m3u8")
+	if err != nil {
+		t.Fatal(err)
+	}
+	p, err := NewMediaPlaylist(5, 798)
+	if err != nil {
+		t.Fatalf("Create media playlist failed: %s", err)
+	}
+	err = p.DecodeFrom(bufio.NewReader(f), true)
+	if err != nil {
+		t.Fatal(err)
+	}
+	// check parsed values
+	if p.ver != 5 {
+		t.Errorf("Version of parsed playlist = %d (must = 5)", p.ver)
+	}
+	if p.SessionKey.URI != "skd://7e336606b0ec47dd28bd768e3c64fd8d" {
+		t.Errorf("SessionKey URI=%s (must = skd://7e336606b0ec47dd28bd768e3c64fd8d)", p.SessionKey.URI)
+	}
+}
+
 /****************
  *  Benchmarks  *
  ****************/

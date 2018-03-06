@@ -363,6 +363,31 @@ func (p *MediaPlaylist) Encode() *bytes.Buffer {
 		}
 		p.buf.WriteRune('\n')
 	}
+	if p.SessionKey != nil {
+		p.buf.WriteString("#EXT-X-SESSION-KEY:")
+		p.buf.WriteString("METHOD=")
+		p.buf.WriteString(p.SessionKey.Method)
+		if p.SessionKey.Method != "NONE" {
+			p.buf.WriteString(",URI=\"")
+			p.buf.WriteString(p.SessionKey.URI)
+			p.buf.WriteRune('"')
+			if p.SessionKey.IV != "" {
+				p.buf.WriteString(",IV=")
+				p.buf.WriteString(p.SessionKey.IV)
+			}
+			if p.SessionKey.Keyformat != "" {
+				p.buf.WriteString(",KEYFORMAT=\"")
+				p.buf.WriteString(p.SessionKey.Keyformat)
+				p.buf.WriteRune('"')
+			}
+			if p.SessionKey.Keyformatversions != "" {
+				p.buf.WriteString(",KEYFORMATVERSIONS=\"")
+				p.buf.WriteString(p.SessionKey.Keyformatversions)
+				p.buf.WriteRune('"')
+			}
+		}
+		p.buf.WriteRune('\n')
+	}
 	if p.Map != nil {
 		p.buf.WriteString("#EXT-X-MAP:")
 		p.buf.WriteString("URI=\"")
