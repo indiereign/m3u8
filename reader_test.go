@@ -527,10 +527,7 @@ func TestDecodeMediaPlaylistWithFairplayOffline(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	p, err := NewMediaPlaylist(5, 798)
-	if err != nil {
-		t.Fatalf("Create media playlist failed: %s", err)
-	}
+	p := NewMasterPlaylist()
 	err = p.DecodeFrom(bufio.NewReader(f), true)
 	if err != nil {
 		t.Fatal(err)

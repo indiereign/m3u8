@@ -119,7 +119,6 @@ type MediaPlaylist struct {
 	buf            bytes.Buffer
 	ver            uint8
 	Key            *Key // EXT-X-KEY is optional encryption key displayed before any segments (default key for the playlist)
-	SessionKey     *Key // EXT-X-SESSION-KEY is optional encryption key displayed before any segments (default key for the playlist)
 	Map            *Map // EXT-X-MAP is optional tag specifies how to obtain the Media Initialization Section (default map for the playlist)
 	WV             *WV  // Widevine related tags outside of M3U8 specs
 }
@@ -145,6 +144,7 @@ type MasterPlaylist struct {
 	CypherVersion string // non-standard tag for Widevine (see also WV struct)
 	buf           bytes.Buffer
 	ver           uint8
+	SessionKey    *Key // EXT-X-SESSION-KEY is optional encryption key displayed before any segments (default key for the playlist)
 }
 
 // This structure represents variants for master playlist.
@@ -214,7 +214,7 @@ type SCTE struct {
 
 // This structure represents information about stream encryption.
 //
-// Realizes EXT-X-KEY tag.
+// Realizes EXT-X-KEY and EXT-X-SESSION-KEY tag.
 type Key struct {
 	Method            string
 	URI               string
@@ -287,7 +287,6 @@ type decodingState struct {
 	variant            *Variant
 	alternatives       []*Alternative
 	xkey               *Key
-	xsessionKey        *Key
 	xmap               *Map
 	scte               *SCTE
 }

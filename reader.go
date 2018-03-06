@@ -341,6 +341,24 @@ func decodeLineOfMasterPlaylist(p *MasterPlaylist, state *decodingState, line st
 				state.variant.Video = v
 			}
 		}
+	case strings.HasPrefix(line, "#EXT-X-SESSION-KEY:"):
+		state.listType = MASTER
+		newSessionKey := new(Key)
+		for k, v := range decodeParamsLine(line[11:]) {
+			switch k {
+			case "METHOD":
+				newSessionKey.Method = v
+			case "URI":
+				newSessionKey.URI = v
+			case "IV":
+				newSessionKey.IV = v
+			case "KEYFORMAT":
+				newSessionKey.Keyformat = v
+			case "KEYFORMATVERSIONS":
+				newSessionKey.Keyformatversions = v
+			}
+		}
+		p.SessionKey = newSessionKey
 	case strings.HasPrefix(line, "#"): // unknown tags treated as comments
 		return err
 	}
@@ -425,12 +443,6 @@ func decodeLineOfMediaPlaylist(p *MediaPlaylist, wv *WV, state *decodingState, l
 			}
 			state.tagKey = false
 		}
-		if state.tagSessionKey {
-			if p.SessionKey == nil {
-				p.SessionKey = state.xsessionKey
-			}
-			state.tagSessionKey = false
-		}
 		// If EXT-X-MAP appeared before reference to segment (EXTINF) then it linked to this segment
 		if state.tagMap {
 			p.Segments[p.last()].Map = &Map{state.xmap.URI, state.xmap.Limit, state.xmap.Offset}
@@ -496,24 +508,6 @@ func decodeLineOfMediaPlaylist(p *MediaPlaylist, wv *WV, state *decodingState, l
 			}
 		}
 		state.tagKey = true
-	case strings.HasPrefix(line, "#EXT-X-SESSION-KEY:"):
-		state.listType = MEDIA
-		state.xsessionKey = new(Key)
-		for k, v := range decodeParamsLine(line[11:]) {
-			switch k {
-			case "METHOD":
-				state.xsessionKey.Method = v
-			case "URI":
-				state.xsessionKey.URI = v
-			case "IV":
-				state.xsessionKey.IV = v
-			case "KEYFORMAT":
-				state.xsessionKey.Keyformat = v
-			case "KEYFORMATVERSIONS":
-				state.xsessionKey.Keyformatversions = v
-			}
-		}
-		state.tagSessionKey = true
 	case strings.HasPrefix(line, "#EXT-X-MAP:"):
 		state.listType = MEDIA
 		state.xmap = new(Map)
